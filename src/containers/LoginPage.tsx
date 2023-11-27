@@ -8,6 +8,12 @@ import {
     Input,
     VStack,
     Text,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
 } from '@chakra-ui/react';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import React, { useState } from 'react';
@@ -15,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../store/rootReducer';
 import { loginUser } from '../store/slices/userSlice';
+import RegistrationPage from './RegistrationPage';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -24,13 +31,18 @@ const LoginPage: React.FC = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isRegistrationModalOpen, setRegistrationModalOpen] = useState(false);
 
     const handleLogin = () => {
         dispatch(loginUser({ email, password }));
     };
 
     const handleRegister = () => {
-        navigate('/registrationPage');
+        setRegistrationModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setRegistrationModalOpen(false);
     };
 
     return (
@@ -72,6 +84,17 @@ const LoginPage: React.FC = () => {
                     {error && <Text color="red.500">{error}</Text>}
                 </Grid>
             </Box>
+
+            <Modal isOpen={isRegistrationModalOpen} onClose={closeModal}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Register</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <RegistrationPage />
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </VStack>
     );
 };

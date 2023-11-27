@@ -1,12 +1,10 @@
 import './App.css';
-import BookList from './components/bookList';
-import LoginPage from './containers/LoginPage';
+import HomePage from './containers/HomePage';
 
 export default function App() {
     return (
         <div>
-            {/* <BookList /> */}
-            <LoginPage />
+            <HomePage />
         </div>
     );
 }
