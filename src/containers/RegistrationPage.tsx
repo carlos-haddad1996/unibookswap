@@ -6,12 +6,8 @@ import {
     Input,
     VStack,
 } from '@chakra-ui/react';
-import { ThunkDispatch } from '@reduxjs/toolkit';
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { RootState } from '../store/rootReducer';
-import { registerUser } from '../store/slices/userSlice';
 
 const RegistrationPage: React.FC = () => {
     const [name, setName] = useState('');
@@ -19,12 +15,8 @@ const RegistrationPage: React.FC = () => {
     const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
-    const dispatch = useDispatch<ThunkDispatch<RootState, void, any>>();
-
-    const { loading, error } = useSelector((state: RootState) => state.user);
 
     const handleRegister = () => {
-        dispatch(registerUser({ name, email, password }));
         navigate('/');
     };
 

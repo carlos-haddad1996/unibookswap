@@ -1,20 +1,19 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { User } from '../interfaces/user';
+import { CredentialResponse } from '@react-oauth/google';
 
 interface UserState {
     users: User[];
-    user: User | null;
+    loggedUser: User | null;
     loading: boolean;
-    // logged: boolean;
     error: string | null;
 }
 
 const initialState: UserState = {
     users: [],
-    user: null,
+    loggedUser: null,
     loading: false,
-    // logged: true,
     error: null,
 };
 
@@ -28,99 +27,59 @@ export const fetchUsers = createAsyncThunk('users/fetchUsers', async () => {
     }
 });
 
-export const loginUser = createAsyncThunk(
-    'user/login',
-    async (
-        { email, password }: { email: string; password: string },
-        { rejectWithValue, dispatch, getState }
-    ) => {
+export const loginWithGoogle = createAsyncThunk(
+    'users/loginWithGoogle',
+    async (response: CredentialResponse) => {
         try {
-            await dispatch(fetchUsers());
-            const state = getState() as { user: UserState };
-            const users = state.user.users;
-            const matchingUser = users.find(
-                (user) => user.email === email && user.password === password
+            const { data } = await axios.post(
+                'http://localhost:8080/auth/login',
+                {
+                    token: response.credential,
+                }
             );
-
-            if (matchingUser) {
-                console.log('Successful');
-                return matchingUser;
-            } else {
-                console.log('Login failed');
-                return rejectWithValue({ message: 'Invalid credentials ' });
-            }
+            const loggedUser: User = data;
+            return loggedUser;
         } catch (error: any) {
-            return rejectWithValue({ message: 'Login failed' });
+            throw new Error('failed to login');
         }
     }
 );
 
-export const registerUser = createAsyncThunk(
-    'user/registerUser',
-    async (newUser: User, { rejectWithValue }) => {
-        try {
-            console.log({ newUser });
-            const response = await axios.post<User>(
-                'http://localhost:8080/users',
-                newUser
-            );
-            return response.data;
-        } catch (error: any) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
+export const logoutUser = () => (dispatch: any) => {
+    dispatch(setUser(null));
+};
 
 const userSlice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        logoutUser: (state) => {
-            state.user = null;
+        setUser: (state, action: PayloadAction<User | null>) => {
+            state.loggedUser = action.payload;
+            state.loading = false;
             state.error = null;
         },
     },
     extraReducers: (builder) => {
-        // Register User
         builder
-            .addCase(registerUser.pending, (state) => {
+            .addCase(loginWithGoogle.pending, (state) => {
                 state.loading = true;
-                // state.logged = false;
                 state.error = null;
             })
             .addCase(
-                registerUser.fulfilled,
+                loginWithGoogle.fulfilled,
                 (state, action: PayloadAction<User>) => {
-                    state.user = action.payload;
-                    state.loading = false;
-                    // state.logged = true;
-                }
-            )
-            .addCase(registerUser.rejected, (state, action: any) => {
-                state.loading = false;
-                state.error = action.payload.message || 'Registration failed';
-            });
-
-        // Login
-        builder
-            .addCase(fetchUsers.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(
-                fetchUsers.fulfilled,
-                (state, action: PayloadAction<User[]>) => {
-                    state.users = action.payload;
+                    state.loggedUser = action.payload;
                     state.loading = false;
                 }
             )
-            .addCase(fetchUsers.rejected, (state, action: any) => {
+            .addCase(loginWithGoogle.rejected, (state, action: any) => {
                 state.loading = false;
-                state.error = action.payload.message || 'Failed to fetch users';
+                state.error =
+                    action.payload.message || 'Login With Google failed';
             });
     },
 });
 
-export const { logoutUser } = userSlice.actions;
+export const { setUser } = userSlice.actions;
 
 export default userSlice.reducer;
