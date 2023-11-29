@@ -3,15 +3,21 @@ import LoginPage from './containers/LoginPage';
 import HomePage from './containers/HomePage';
 import PrivateRoute from './routes/PrivateRoute';
 import DashboardPage from './containers/DashboardPage';
+import NavBar from './components/NavBar';
+import { useSelector } from 'react-redux';
+import { RootState } from './store/rootReducer';
 
-export default function AppRouter() {
+function AppRoutes() {
+    const { loggedUser } = useSelector((state: RootState) => state.user);
+
     return (
         <BrowserRouter>
+            <NavBar />
             <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/loginPage" element={<LoginPage />} />
                 <Route
-                    path="/dashboard"
+                    path={`/dashboard/${loggedUser?.id}`}
                     element={
                         <PrivateRoute>
                             <DashboardPage />
@@ -20,5 +26,13 @@ export default function AppRouter() {
                 />
             </Routes>
         </BrowserRouter>
+    );
+}
+
+export default function AppRouter() {
+    return (
+        <div>
+            <AppRoutes />
+        </div>
     );
 }

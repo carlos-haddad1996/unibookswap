@@ -56,7 +56,7 @@ const NavBar: React.FC = () => {
             </Box>
             <Spacer />
             {loggedUser ? (
-                <Link to="/dashboard">
+                <Link to={`/dashboard/${loggedUser.id}`}>
                     <Button colorScheme="teal" mr={4}>
                         Dashboard
                     </Button>
