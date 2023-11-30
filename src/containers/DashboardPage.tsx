@@ -18,6 +18,7 @@ import {
     Alert,
     AlertIcon,
     Spinner,
+    useToast,
 } from '@chakra-ui/react';
 import UploadBook from '../components/UploadBook';
 import { fetchBooksByUser, setSuccessMessage } from '../store/slices/bookSlice';
@@ -26,6 +27,7 @@ import UserBookCard from '../components/UserBookCard';
 
 const DashboardPage: React.FC = () => {
     const dispatch = useDispatch<ThunkDispatch<RootState, void, any>>();
+    const toast = useToast();
 
     const { loggedUser } = useSelector((state: RootState) => state.user);
     const { books, loading, error } = useSelector(
@@ -52,13 +54,18 @@ const DashboardPage: React.FC = () => {
 
     useEffect(() => {
         if (successMessage) {
-            setUploadModalOpen(false);
-            const timeoutId = setTimeout(() => {
-                dispatch(setSuccessMessage({ message: null }));
-            }, 10000);
-            return () => clearTimeout(timeoutId);
+            toast({
+                title: 'Success',
+                description: successMessage,
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
         }
-    }, [successMessage, dispatch]);
+
+        setUploadModalOpen(false);
+        dispatch(setSuccessMessage({ message: null }));
+    }, [successMessage, dispatch, toast]);
 
     return (
         <div>
@@ -115,13 +122,6 @@ const DashboardPage: React.FC = () => {
                     </ModalBody>
                 </ModalContent>
             </Modal>
-
-            {successMessage && (
-                <Alert status="success" mb={4}>
-                    <AlertIcon />
-                    {successMessage}
-                </Alert>
-            )}
         </div>
     );
 };

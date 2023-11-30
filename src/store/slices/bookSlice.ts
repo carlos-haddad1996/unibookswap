@@ -10,6 +10,8 @@ import { Book, BookUpload } from '../interfaces/book';
 interface BookState {
     books: Book[];
     booksByUser: Book[];
+    authors: string[];
+    categories: string[];
     loading: boolean;
     successMessage: string | null;
     error: string | null;
@@ -18,6 +20,8 @@ interface BookState {
 const initialState: BookState = {
     books: [],
     booksByUser: [],
+    authors: [],
+    categories: [],
     loading: false,
     successMessage: null,
     error: null,
@@ -29,6 +33,34 @@ export const fetchBooks = createAsyncThunk(
         try {
             const response = await axios.get<Book[]>(
                 'http://localhost:8080/books'
+            );
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const fetchAuthors = createAsyncThunk(
+    'books/fetchAuthors',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(
+                'http://localhost:8080/books/authors'
+            );
+            return response.data;
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const fetchCategories = createAsyncThunk(
+    'books/fetchCategories',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get<string[]>(
+                'http://localhost:8080/books/categories'
             );
             return response.data;
         } catch (error: any) {
@@ -109,6 +141,42 @@ const bookSlice = createSlice({
             state.loading = false;
             state.error = action.payload as string;
         });
+
+        // Fetch Authors
+        builder
+            .addCase(fetchAuthors.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(
+                fetchAuthors.fulfilled,
+                (state, action: PayloadAction<string[]>) => {
+                    state.authors = action.payload;
+                    state.loading = false;
+                }
+            )
+            .addCase(fetchAuthors.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
+
+        // Fetch Categories
+        builder
+            .addCase(fetchCategories.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(
+                fetchCategories.fulfilled,
+                (state, action: PayloadAction<string[]>) => {
+                    state.categories = action.payload;
+                    state.loading = false;
+                }
+            )
+            .addCase(fetchCategories.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
 
         //Fetch Books by User
         builder
