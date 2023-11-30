@@ -1,10 +1,12 @@
 import React from 'react';
+import ProductsPage from '../containers/ProductsPage';
+import { VStack } from '@chakra-ui/react';
 
 const HomePage: React.FC = () => {
     return (
-        <div>
-            <h1>Home Page</h1>
-        </div>
+        <VStack marginTop="20px">
+            <ProductsPage />
+        </VStack>
     );
 };
 
