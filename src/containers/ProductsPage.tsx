@@ -9,6 +9,7 @@ import {
     Spinner,
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { RootState } from '../store/rootReducer';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import {
@@ -120,9 +121,11 @@ const ProductsPage: React.FC = () => {
                     ) : (
                         <SimpleGrid columns={3} spacing={5}>
                             {filteredBooks.map((book) => (
-                                <Box key={book.id}>
-                                    <ProductCard book={book} />
-                                </Box>
+                                <Link to={`/books/${book.id}`}>
+                                    <Box key={book.id}>
+                                        <ProductCard book={book} />
+                                    </Box>
+                                </Link>
                             ))}
                         </SimpleGrid>
                     )}

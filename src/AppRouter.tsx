@@ -6,9 +6,11 @@ import DashboardPage from './containers/DashboardPage';
 import NavBar from './components/NavBar';
 import { useSelector } from 'react-redux';
 import { RootState } from './store/rootReducer';
+import BookPage from './components/BookPage';
 
 function AppRoutes() {
     const { loggedUser } = useSelector((state: RootState) => state.user);
+    const books = useSelector((state: RootState) => state.books.books);
 
     return (
         <BrowserRouter>
@@ -23,6 +25,10 @@ function AppRoutes() {
                             <DashboardPage />
                         </PrivateRoute>
                     }
+                />
+                <Route
+                    path="/books/:bookId"
+                    element={<BookPage books={books} />}
                 />
             </Routes>
         </BrowserRouter>

@@ -9,7 +9,7 @@ export interface BookUpload {
 }
 
 export interface Book {
-    id: string;
+    id: number;
     title: string;
     author: string;
     price: string;
