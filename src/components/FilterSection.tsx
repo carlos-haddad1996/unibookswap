@@ -22,7 +22,7 @@ const FilterSection: React.FC<FilterSectionProps> = ({
     return (
         <div>
             <Heading>Filter Option</Heading>
-            <VStack spacing={2}>
+            <VStack spacing={2} pt={10}>
                 <FilterCheckboxes
                     filterName="Authors"
                     filterValue={authors}

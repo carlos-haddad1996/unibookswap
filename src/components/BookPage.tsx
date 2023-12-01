@@ -18,32 +18,50 @@ import {
     NumberInput,
     NumberInputField,
     NumberInputStepper,
+    useToast,
 } from '@chakra-ui/react';
 import { faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart } from '../store/slices/cartSlice';
+import { RootState } from '../store/rootReducer';
 
 interface BookPageProps {
     books: Book[];
 }
 
 const BookPage: React.FC<BookPageProps> = ({ books }) => {
-    console.log(books);
+    const dispatch = useDispatch();
+    const toast = useToast();
 
     const { bookId } = useParams<{ bookId: string }>();
+
+    const { items } = useSelector((state: RootState) => state.cart);
 
     const selectedBook = books.find((book) => book.id === Number(bookId));
 
     const [quantity, setQuantity] = useState<number>(1);
 
-    console.log({ bookId, selectedBook });
-
-    const handleAddToCart = () => {
-        console.log('Add to cart');
-    };
+    console.log({ items });
+    console.log({ quantity });
 
     if (!selectedBook) {
         return <div>Book not found.</div>;
     }
+
+    const handleAddToCart = () => {
+        if (selectedBook) {
+            dispatch(addToCart({ book: selectedBook, quantity }));
+            toast({
+                title: 'Success',
+                description: 'Item added to cart successfully.',
+                status: 'success',
+                duration: 1500,
+                isClosable: true,
+            });
+            setQuantity(1);
+        }
+    };
 
     return (
         <VStack spacing={4} align="center" p={4}>
@@ -83,14 +101,14 @@ const BookPage: React.FC<BookPageProps> = ({ books }) => {
                     {/* Price Label */}
                     <Text fontWeight="bold">Precio:</Text>
                     {/* Price Value */}
-                    <Text color="blue.600" fontSize="2xl">
+                    <Text color="blue.400" fontSize="2xl">
                         {`L. ${selectedBook.price}`}
                     </Text>
                     {/* Add to Cart Section */}
                     <Box w="100%">
                         <HStack>
                             <Button
-                                colorScheme="teal"
+                                colorScheme="blue"
                                 leftIcon={
                                     <FontAwesomeIcon icon={faCartShopping} />
                                 }

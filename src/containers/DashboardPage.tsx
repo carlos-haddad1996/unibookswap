@@ -19,6 +19,7 @@ import {
     AlertIcon,
     Spinner,
     useToast,
+    useColorMode,
 } from '@chakra-ui/react';
 import UploadBook from '../components/UploadBook';
 import { fetchBooksByUser, setSuccessMessage } from '../store/slices/bookSlice';
@@ -86,7 +87,7 @@ const DashboardPage: React.FC = () => {
             </VStack>
             <VStack spacing={4} align="center">
                 <Text>Book Management</Text>
-                <Button size="sm" onClick={openUploadModal} colorScheme="teal">
+                <Button size="sm" onClick={openUploadModal} colorScheme="blue">
                     Upload
                 </Button>
             </VStack>
@@ -94,9 +95,10 @@ const DashboardPage: React.FC = () => {
                 <Box>
                     {loading && (
                         <Spinner
+                            p={4}
                             size="xl"
                             thickness="4px"
-                            color="teal.500"
+                            color="blue.800"
                             mb="4"
                         />
                     )}

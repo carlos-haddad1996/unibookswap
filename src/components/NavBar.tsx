@@ -12,6 +12,8 @@ import {
     ModalCloseButton,
     ModalBody,
     Image,
+    HStack,
+    useColorMode,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import LoginPage from '../containers/LoginPage';
@@ -20,9 +22,13 @@ import { RootState } from '../store/rootReducer';
 import { googleLogout } from '@react-oauth/google';
 import { logoutUser } from '../store/slices/userSlice';
 import { useAppDispatch } from '../store/hooks';
+import CartPopOver from './CartPopOver';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 
 const NavBar: React.FC = () => {
     const dispatch = useAppDispatch();
+    const { colorMode, toggleColorMode } = useColorMode();
     const { loggedUser } = useSelector((state: RootState) => state.user);
 
     const [isLoginModalOpen, setLoginModalOpen] = useState(false);
@@ -48,42 +54,58 @@ const NavBar: React.FC = () => {
     }, [loggedUser]);
 
     return (
-        <Flex p={4} bg="teal.500" color="white">
+        <Flex p={4} color="white" boxShadow="lg">
             <Box>
-                <ChakraLink as={Link} to="/">
-                    Home
-                </ChakraLink>
+                <Link to={'/'}>
+                    <Button colorScheme="blue" mr={4}>
+                        Home
+                    </Button>
+                </Link>
             </Box>
-            <Spacer />
             {loggedUser ? (
                 <Link to={`/dashboard/${loggedUser.id}`}>
-                    <Button colorScheme="teal" mr={4}>
+                    <Button colorScheme="blue" mr={4}>
                         Dashboard
                     </Button>
                 </Link>
             ) : null}
+            <Spacer />
             <Box>
                 {!loggedUser ? (
-                    <Button colorScheme="teal" onClick={openLoginModal} mr={4}>
+                    <Button colorScheme="blue" onClick={openLoginModal} mr={4}>
                         Login
                     </Button>
                 ) : (
-                    <Box display="flex">
-                        <Image
-                            borderRadius="full"
-                            boxSize="35px"
-                            src={loggedUser.picture}
-                            alt={loggedUser.name}
-                        />
-                        <Button
-                            colorScheme="teal"
-                            onClick={logoutUserSession}
-                            mr={4}
-                        >
-                            Logout
-                        </Button>
+                    <Box display="flex" alignItems="center">
+                        <Box mr="5">
+                            <Image
+                                borderRadius="full"
+                                boxSize="35px"
+                                src={loggedUser.picture}
+                                alt={loggedUser.name}
+                            />
+                        </Box>
+                        <Box>
+                            <Button
+                                colorScheme="blue"
+                                onClick={logoutUserSession}
+                                mr={4}
+                            >
+                                Logout
+                            </Button>
+                        </Box>
                     </Box>
                 )}
+            </Box>
+            <Box>
+                <CartPopOver />
+            </Box>
+            <Box pl={2}>
+                <Button
+                    colorScheme="blue"
+                    onClick={toggleColorMode}
+                    leftIcon={<FontAwesomeIcon icon={faLightbulb} />}
+                />
             </Box>
 
             <Modal isOpen={isLoginModalOpen} onClose={closeModal}>
