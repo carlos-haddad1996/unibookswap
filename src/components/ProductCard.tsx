@@ -31,7 +31,7 @@ const ProductCard: React.FC<BookCardProps> = ({ book }) => {
                 </Box>
                 <Stack mt={6} spacing={3}>
                     <Heading size="md">{book.title}</Heading>
-                    <Text>{book.description}</Text>
+                    {/* <Text>{book.description}</Text> */}
                     <Text color="blue.600" fontSize="2xl">
                         {`L. ${book.price}`}
                     </Text>
