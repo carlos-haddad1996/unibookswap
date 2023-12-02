@@ -19,18 +19,41 @@ import {
     Spacer,
     Image,
     PopoverFooter,
+    useToast,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartShopping, faX } from '@fortawesome/free-solid-svg-icons';
 import { removeFromCart } from '../store/slices/cartSlice';
 import { Book } from '../store/interfaces/book';
+import { selectCartTotalPrice } from '../store/slices/cartSlice';
+import { useNavigate } from 'react-router-dom';
 
 const CartPopOver: React.FC = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const toast = useToast();
+
+    const loggedUser = useSelector((state: RootState) => state.user.loggedUser);
     const items = useSelector((state: RootState) => state.cart.items);
+    const totalPrice = useSelector(selectCartTotalPrice);
 
     const removeItem = (book: Book) => {
         dispatch(removeFromCart(book));
+    };
+
+    const handleCheckout = () => {
+        if (!loggedUser) {
+            toast({
+                title: 'Error',
+                description: 'Please login to checkout.',
+                status: 'error',
+                duration: 1500,
+                isClosable: true,
+            });
+            return;
+        }
+
+        navigate(`/checkout/${loggedUser.id}`);
     };
 
     return (
@@ -93,9 +116,11 @@ const CartPopOver: React.FC = () => {
                         justifyContent="space-between"
                         pb={4}
                     >
-                        <Button colorScheme="blue">Checkout</Button>
+                        <Button onClick={handleCheckout} colorScheme="blue">
+                            Checkout
+                        </Button>
                         <Spacer />
-                        <Text>Total: L. 40000</Text>
+                        <Text>Total: L.{totalPrice}</Text>
                     </PopoverFooter>
                 ) : null}
             </PopoverContent>

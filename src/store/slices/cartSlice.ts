@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Book } from '../interfaces/book';
+import { RootState } from '../rootReducer';
 
 interface CartItem {
     book: Book;
@@ -17,6 +18,17 @@ const initialState: CartState = {
     totalQuantity: 0,
     totalPrice: 0,
 };
+
+export const selectCartTotalPrice = createSelector(
+    (state: RootState) => state.cart.items,
+    (items) => {
+        return items
+            .reduce((total, item) => {
+                return total + parseFloat(item.book.price) * item.quantity;
+            }, 0)
+            .toFixed(2);
+    }
+);
 
 const cartSlice = createSlice({
     name: 'cart',
@@ -53,8 +65,19 @@ const cartSlice = createSlice({
             state.totalQuantity = 0;
             state.totalPrice = 0;
         },
+        updateCart(
+            state,
+            action: PayloadAction<{ bookId: number; quantity: number }>
+        ) {
+            const { bookId, quantity } = action.payload;
+            const item = state.items.find((i) => i.book.id === bookId);
+            if (item) {
+                state.totalQuantity += quantity - item.quantity;
+            }
+        },
     },
 });
 
-export const { addToCart, removeFromCart, clearCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, clearCart, updateCart } =
+    cartSlice.actions;
 export default cartSlice.reducer;
