@@ -115,17 +115,15 @@ const ProductsPage: React.FC = () => {
                     )}
                     {error && <p>Error: {error}</p>}
                 </Box>
-                <Box>
+                <Box overflowY="scroll" maxHeight="80vh" width="100%">
                     {filteredBooks.length === 0 ? (
                         <Text>No Books Found</Text>
                     ) : (
                         <SimpleGrid columns={3} spacing={5}>
                             {filteredBooks.map((book) => (
-                                <Link to={`/books/${book.id}`}>
-                                    <Box key={book.id}>
-                                        <ProductCard book={book} />
-                                    </Box>
-                                </Link>
+                                <Box key={book.id}>
+                                    <ProductCard book={book} />
+                                </Box>
                             ))}
                         </SimpleGrid>
                     )}

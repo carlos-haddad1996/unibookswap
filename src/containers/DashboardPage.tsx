@@ -68,6 +68,15 @@ const DashboardPage: React.FC = () => {
         dispatch(setSuccessMessage({ message: null }));
     }, [successMessage, dispatch, toast]);
 
+    if (!loggedUser) {
+        return (
+            <Alert status="error">
+                <AlertIcon />
+                You must be logged in to access this page.
+            </Alert>
+        );
+    }
+
     return (
         <div>
             <VStack>
@@ -104,11 +113,19 @@ const DashboardPage: React.FC = () => {
                     )}
                     {error && <p>Error: {error}</p>}
                 </Box>
-                <SimpleGrid columns={3} spacing={5}>
+                <SimpleGrid
+                    columns={3}
+                    spacing={5}
+                    overflowY="scroll"
+                    maxHeight="80vh"
+                >
                     {books.map((book) => {
                         return (
                             <Box key={book.id}>
-                                <UserBookCard book={book} />
+                                <UserBookCard
+                                    userId={loggedUser.id}
+                                    book={book}
+                                />
                             </Box>
                         );
                     })}

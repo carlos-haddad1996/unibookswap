@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Book } from '../store/interfaces/book';
 import {
     Box,
@@ -12,12 +13,27 @@ import {
     Button,
     CardFooter,
 } from '@chakra-ui/react';
+import EditBookModal from './EditBookModal';
+import DeleteBookPopOver from './DeleteBookPopOver';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
 interface BookCardProps {
+    userId: string;
     book: Book;
 }
 
-const UserBookCard: React.FC<BookCardProps> = ({ book }) => {
+const UserBookCard: React.FC<BookCardProps> = ({ userId, book }) => {
+    const [isEditModalOpen, setEditModalOpen] = useState<boolean>(false);
+
+    const handleEditModalOpen = () => {
+        setEditModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setEditModalOpen(false);
+    };
+
     return (
         <Card maxW="sm">
             <CardBody>
@@ -40,14 +56,24 @@ const UserBookCard: React.FC<BookCardProps> = ({ book }) => {
             <Divider />
             <CardFooter>
                 <ButtonGroup spacing="2">
-                    <Button variant="solid" colorScheme="blue">
+                    <Button
+                        leftIcon={<FontAwesomeIcon icon={faPenToSquare} />}
+                        variant="solid"
+                        colorScheme="blue"
+                        onClick={() => handleEditModalOpen()}
+                    >
                         Editar Libro
                     </Button>
-                    <Button variant="ghost" colorScheme="red">
-                        Borrar Libro
-                    </Button>
+                    <DeleteBookPopOver userId={userId} book={book} />
                 </ButtonGroup>
             </CardFooter>
+
+            <EditBookModal
+                isOpen={isEditModalOpen}
+                onClose={handleCloseModal}
+                userId={userId}
+                book={book}
+            />
         </Card>
     );
 };
