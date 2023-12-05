@@ -9,6 +9,7 @@ import {
     Spinner,
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { RootState } from '../store/rootReducer';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import {
@@ -114,7 +115,7 @@ const ProductsPage: React.FC = () => {
                     )}
                     {error && <p>Error: {error}</p>}
                 </Box>
-                <Box>
+                <Box overflowY="scroll" maxHeight="80vh" width="100%">
                     {filteredBooks.length === 0 ? (
                         <Text>No Books Found</Text>
                     ) : (

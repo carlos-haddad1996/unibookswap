@@ -19,6 +19,7 @@ import {
     AlertIcon,
     Spinner,
     useToast,
+    useColorMode,
 } from '@chakra-ui/react';
 import UploadBook from '../components/UploadBook';
 import { fetchBooksByUser, setSuccessMessage } from '../store/slices/bookSlice';
@@ -67,6 +68,15 @@ const DashboardPage: React.FC = () => {
         dispatch(setSuccessMessage({ message: null }));
     }, [successMessage, dispatch, toast]);
 
+    if (!loggedUser) {
+        return (
+            <Alert status="error">
+                <AlertIcon />
+                You must be logged in to access this page.
+            </Alert>
+        );
+    }
+
     return (
         <div>
             <VStack>
@@ -86,7 +96,7 @@ const DashboardPage: React.FC = () => {
             </VStack>
             <VStack spacing={4} align="center">
                 <Text>Book Management</Text>
-                <Button size="sm" onClick={openUploadModal} colorScheme="teal">
+                <Button size="sm" onClick={openUploadModal} colorScheme="blue">
                     Upload
                 </Button>
             </VStack>
@@ -94,19 +104,28 @@ const DashboardPage: React.FC = () => {
                 <Box>
                     {loading && (
                         <Spinner
+                            p={4}
                             size="xl"
                             thickness="4px"
-                            color="teal.500"
+                            color="blue.800"
                             mb="4"
                         />
                     )}
                     {error && <p>Error: {error}</p>}
                 </Box>
-                <SimpleGrid columns={3} spacing={5}>
+                <SimpleGrid
+                    columns={3}
+                    spacing={5}
+                    overflowY="scroll"
+                    maxHeight="80vh"
+                >
                     {books.map((book) => {
                         return (
                             <Box key={book.id}>
-                                <UserBookCard book={book} />
+                                <UserBookCard
+                                    userId={loggedUser.id}
+                                    book={book}
+                                />
                             </Box>
                         );
                     })}

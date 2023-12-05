@@ -8,8 +8,18 @@ export interface BookUpload {
     image: File;
 }
 
+export interface BookUpdate {
+    id?: number;
+    title: string;
+    author: string;
+    price: string;
+    description: string;
+    category: string;
+    image: string;
+}
+
 export interface Book {
-    id: string;
+    id: number;
     title: string;
     author: string;
     price: string;

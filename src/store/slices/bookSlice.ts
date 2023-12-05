@@ -5,7 +5,7 @@ import {
     createAction,
 } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { Book, BookUpload } from '../interfaces/book';
+import { Book, BookUpdate, BookUpload } from '../interfaces/book';
 
 interface BookState {
     books: Book[];
@@ -14,6 +14,7 @@ interface BookState {
     categories: string[];
     loading: boolean;
     successMessage: string | null;
+    failMessage: string | null;
     error: string | null;
 }
 
@@ -24,6 +25,7 @@ const initialState: BookState = {
     categories: [],
     loading: false,
     successMessage: null,
+    failMessage: null,
     error: null,
 };
 
@@ -112,6 +114,61 @@ export const addBook = createAsyncThunk(
             return response.data;
         } catch (error: any) {
             return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const updateBook = createAsyncThunk(
+    'books/updateBook',
+    async (
+        {
+            userId,
+            bookId,
+            updatedBook,
+        }: { userId: string; bookId: number; updatedBook: BookUpdate },
+        { rejectWithValue, dispatch }
+    ) => {
+        try {
+            const response = await axios.put(
+                `http://localhost:8080/books/${bookId}/user/${userId}`,
+                updatedBook
+            );
+
+            dispatch(
+                setSuccessMessage({
+                    message: `El libro "${updatedBook.title}" fue actualizado exitosamente`,
+                })
+            );
+
+            return response.data;
+        } catch (error: any) {
+            console.log({ error });
+            return rejectWithValue(error.response.data.message);
+        }
+    }
+);
+
+export const deleteBook = createAsyncThunk(
+    'books/deleteBook',
+    async (
+        { userId, bookId }: { userId: string; bookId: number },
+        { rejectWithValue, dispatch }
+    ) => {
+        try {
+            const response = await axios.delete(
+                `http://localhost:8080/books/${bookId}/user/${userId}`
+            );
+
+            dispatch(
+                setSuccessMessage({
+                    message: `El libro fue eliminado exitosamente`,
+                })
+            );
+
+            return response.data;
+        } catch (error: any) {
+            console.log({ error });
+            return rejectWithValue(error.response.data.message);
         }
     }
 );
@@ -211,6 +268,7 @@ const bookSlice = createSlice({
             .addCase(addBook.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+                state.failMessage = action.payload as string;
             })
             .addCase(
                 setSuccessMessage,
@@ -218,6 +276,24 @@ const bookSlice = createSlice({
                     state.successMessage = action.payload.message;
                 }
             );
+
+        //Update Books
+        builder
+            .addCase(updateBook.pending, (state) => {
+                state.loading = true;
+                state.successMessage = null;
+                state.error = null;
+            })
+            .addCase(updateBook.fulfilled, (state) => {
+                state.loading = false;
+                state.successMessage = null;
+                state.error = null;
+            })
+            .addCase(updateBook.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+                state.failMessage = action.payload as string;
+            });
     },
 });
 
