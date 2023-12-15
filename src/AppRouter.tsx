@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from './store/rootReducer';
 import BookPage from './components/BookPage';
 import CheckoutPage from './containers/CheckoutPage';
+import NotFoundPage from './containers/NotFoundPage';
 
 function AppRoutes() {
     const { loggedUser } = useSelector((state: RootState) => state.user);
@@ -31,6 +32,7 @@ function AppRoutes() {
                     path="/books/:bookId"
                     element={<BookPage books={books} />}
                 />
+                <Route path="/404" element={<NotFoundPage />} />
                 <Route
                     path={`/checkout/${loggedUser?.id}`}
                     element={

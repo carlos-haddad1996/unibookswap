@@ -54,59 +54,75 @@ const NavBar: React.FC = () => {
     }, [loggedUser]);
 
     return (
-        <Flex p={4} color="white" boxShadow="lg">
-            <Box>
-                <Link to={'/'}>
-                    <Button colorScheme="blue" mr={4}>
-                        Home
-                    </Button>
-                </Link>
-            </Box>
-            {loggedUser ? (
-                <Link to={`/dashboard/${loggedUser.id}`}>
-                    <Button colorScheme="blue" mr={4}>
-                        Dashboard
-                    </Button>
-                </Link>
-            ) : null}
+        <Flex p={4} color="white" boxShadow="lg" height="90px">
+            <HStack spacing={4}>
+                <Box>
+                    <Image
+                        src="https://storage.googleapis.com/unibookswap-bucket/complete-logo.png"
+                        alt="logo"
+                        width={150}
+                        height={75}
+                    />
+                </Box>
+                <Box>
+                    <Link to={'/'}>
+                        <Button colorScheme="blue" mr={4}>
+                            Home
+                        </Button>
+                    </Link>
+                </Box>
+                {loggedUser ? (
+                    <Link to={`/dashboard/${loggedUser.id}`}>
+                        <Button colorScheme="blue" mr={4}>
+                            Dashboard
+                        </Button>
+                    </Link>
+                ) : null}
+            </HStack>
             <Spacer />
-            <Box>
-                {!loggedUser ? (
-                    <Button colorScheme="blue" onClick={openLoginModal} mr={4}>
-                        Login
-                    </Button>
-                ) : (
-                    <Box display="flex" alignItems="center">
-                        <Box mr="5">
-                            <Image
-                                borderRadius="full"
-                                boxSize="35px"
-                                src={loggedUser.picture}
-                                alt={loggedUser.name}
-                            />
+            <HStack>
+                <Box>
+                    {!loggedUser ? (
+                        <Button
+                            colorScheme="blue"
+                            onClick={openLoginModal}
+                            mr={4}
+                        >
+                            Login
+                        </Button>
+                    ) : (
+                        <Box display="flex" alignItems="center">
+                            <Box mr="5">
+                                <Image
+                                    borderRadius="full"
+                                    boxSize="35px"
+                                    src={loggedUser.picture}
+                                    alt={loggedUser.name}
+                                />
+                            </Box>
+                            <Box>
+                                <Button
+                                    colorScheme="blue"
+                                    onClick={logoutUserSession}
+                                    mr={4}
+                                >
+                                    Logout
+                                </Button>
+                            </Box>
                         </Box>
-                        <Box>
-                            <Button
-                                colorScheme="blue"
-                                onClick={logoutUserSession}
-                                mr={4}
-                            >
-                                Logout
-                            </Button>
-                        </Box>
-                    </Box>
-                )}
-            </Box>
-            <Box>
-                <CartPopOver />
-            </Box>
-            <Box pl={2}>
-                <Button
-                    colorScheme="blue"
-                    onClick={toggleColorMode}
-                    leftIcon={<FontAwesomeIcon icon={faLightbulb} />}
-                />
-            </Box>
+                    )}
+                </Box>
+                <Box>
+                    <CartPopOver />
+                </Box>
+                <Box pl={2}>
+                    <Button
+                        colorScheme="blue"
+                        onClick={toggleColorMode}
+                        leftIcon={<FontAwesomeIcon icon={faLightbulb} />}
+                    />
+                </Box>
+            </HStack>
 
             <Modal isOpen={isLoginModalOpen} onClose={closeModal}>
                 <ModalOverlay />
