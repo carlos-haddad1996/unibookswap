@@ -60,6 +60,24 @@ const userSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        // Fetch Users
+        builder
+            .addCase(fetchUsers.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(
+                fetchUsers.fulfilled,
+                (state, action: PayloadAction<User[]>) => {
+                    state.users = action.payload;
+                    state.loading = false;
+                }
+            )
+            .addCase(fetchUsers.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
+        // Fetch Google Login
         builder
             .addCase(loginWithGoogle.pending, (state) => {
                 state.loading = true;

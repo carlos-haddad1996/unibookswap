@@ -25,13 +25,14 @@ import UploadBook from '../components/UploadBook';
 import { fetchBooksByUser, setSuccessMessage } from '../store/slices/bookSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import UserBookCard from '../components/UserBookCard';
+import { fetchUsers } from '../store/slices/userSlice';
 
 const DashboardPage: React.FC = () => {
     const dispatch = useDispatch<ThunkDispatch<RootState, void, any>>();
     const toast = useToast();
 
     const { loggedUser } = useSelector((state: RootState) => state.user);
-    const { books, loading, error } = useSelector(
+    const { booksByUser, loading, error } = useSelector(
         (state: RootState) => state.books
     );
 
@@ -48,6 +49,10 @@ const DashboardPage: React.FC = () => {
     const closeModal = () => {
         setUploadModalOpen(false);
     };
+
+    useEffect(() => {
+        dispatch(fetchUsers());
+    }, []);
 
     useEffect(() => {
         if (loggedUser) dispatch(fetchBooksByUser(loggedUser.id));
@@ -77,6 +82,20 @@ const DashboardPage: React.FC = () => {
         );
     }
 
+    if (!loggedUser.activeSub) {
+        return (
+            <Box>
+                <Alert status="error">
+                    <AlertIcon />
+                    {`Necesitas una suscripción activa para acceder a esta página.`}
+                </Alert>
+                <Text
+                    p={4}
+                >{`Ve a la sección de precios para ver los planes que tenemos disponibles.`}</Text>
+            </Box>
+        );
+    }
+
     return (
         <div>
             <VStack>
@@ -97,7 +116,7 @@ const DashboardPage: React.FC = () => {
             <VStack spacing={4} align="center">
                 <Text>Book Management</Text>
                 <Button size="sm" onClick={openUploadModal} colorScheme="blue">
-                    Upload
+                    Subir Libro
                 </Button>
             </VStack>
             <VStack spacing={2} align="center">
@@ -113,13 +132,19 @@ const DashboardPage: React.FC = () => {
                     )}
                     {error && <p>Error: {error}</p>}
                 </Box>
+                {booksByUser.length === 0 && (
+                    <Box>
+                        <Text>{`Todavía no tienes libros en inventario.`}</Text>
+                        <Text>{`Haz click en 'Subir Libro' para comenzar a publicar.`}</Text>
+                    </Box>
+                )}
                 <SimpleGrid
                     columns={3}
                     spacing={5}
                     overflowY="scroll"
                     maxHeight="80vh"
                 >
-                    {books.map((book) => {
+                    {booksByUser.map((book) => {
                         return (
                             <Box key={book.id}>
                                 <UserBookCard

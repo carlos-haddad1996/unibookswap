@@ -67,7 +67,7 @@ const NavBar: React.FC = () => {
                 <Box>
                     <Link to={'/'}>
                         <Button colorScheme="blue" mr={4}>
-                            Home
+                            Inicio
                         </Button>
                     </Link>
                 </Box>
@@ -75,6 +75,13 @@ const NavBar: React.FC = () => {
                     <Link to={`/dashboard/${loggedUser.id}`}>
                         <Button colorScheme="blue" mr={4}>
                             Dashboard
+                        </Button>
+                    </Link>
+                ) : null}
+                {!loggedUser?.activeSub ? (
+                    <Link to={'/pricing'}>
+                        <Button colorScheme="blue" mr={4}>
+                            Planes de suscripción
                         </Button>
                     </Link>
                 ) : null}

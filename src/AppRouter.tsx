@@ -9,6 +9,7 @@ import { RootState } from './store/rootReducer';
 import BookPage from './components/BookPage';
 import CheckoutPage from './containers/CheckoutPage';
 import NotFoundPage from './containers/NotFoundPage';
+import PricingPage from './containers/PricingPage';
 
 function AppRoutes() {
     const { loggedUser } = useSelector((state: RootState) => state.user);
@@ -28,6 +29,7 @@ function AppRoutes() {
                         </PrivateRoute>
                     }
                 />
+                <Route path="/pricing" element={<PricingPage />} />
                 <Route
                     path="/books/:bookId"
                     element={<BookPage books={books} />}

@@ -26,4 +26,5 @@ export interface Book {
     description: string;
     category: string;
     image: string;
+    userId: string;
 }
