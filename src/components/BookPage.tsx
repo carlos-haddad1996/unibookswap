@@ -25,6 +25,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../store/slices/cartSlice';
 import { RootState } from '../store/rootReducer';
+import VendorPopOver from './VendorPopOver';
 
 interface BookPageProps {
     books: Book[];
@@ -37,15 +38,14 @@ const BookPage: React.FC<BookPageProps> = ({ books }) => {
     const { bookId } = useParams<{ bookId: string }>();
 
     const { items } = useSelector((state: RootState) => state.cart);
+    const users = useSelector((state: RootState) => state.user.users);
 
     const selectedBook = books.find((book) => book.id === Number(bookId));
 
     const [quantity, setQuantity] = useState<number>(1);
+    const bookVendor = users.find((user) => user.id === selectedBook?.userId);
 
-    console.log({ items });
-    console.log({ quantity });
-
-    if (!selectedBook) {
+    if (!selectedBook || !bookVendor) {
         return <div>Book not found.</div>;
     }
 
@@ -80,7 +80,7 @@ const BookPage: React.FC<BookPageProps> = ({ books }) => {
                 {/* Right Column */}
                 <VStack w="60%" align="start" spacing={4}>
                     <Heading size="lg">{selectedBook.title}</Heading>
-                    <HStack spacing={4}>
+                    <HStack spacing={4} align={'start'}>
                         <VStack align="start">
                             <Text fontWeight="bold">Autor:</Text>
                             {/* Author Value */}
@@ -89,7 +89,10 @@ const BookPage: React.FC<BookPageProps> = ({ books }) => {
                         <VStack align="start">
                             <Text fontWeight="bold">Vendedor:</Text>
                             {/* Vendor Value */}
-                            <Text>{selectedBook.author}</Text>
+                            <HStack>
+                                <VendorPopOver vendor={bookVendor} />
+                                {/* <Text>{bookVendor?.name}</Text> */}
+                            </HStack>
                         </VStack>
                         {/* Vendor Label */}
                     </HStack>

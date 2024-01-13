@@ -8,7 +8,7 @@ export default function PrivateRoute({ children }: { children: JSX.Element }) {
     const { loggedUser } = useSelector((state: RootState) => state.user);
 
     if (!loggedUser) {
-        return <Navigate to="/" state={{ from: location }} />;
+        return <Navigate to="/404" state={{ from: location }} />;
     }
 
     return children;

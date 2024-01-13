@@ -20,18 +20,23 @@ import {
     Spinner,
     useToast,
     useColorMode,
+    HStack,
+    Switch,
+    Spacer,
 } from '@chakra-ui/react';
 import UploadBook from '../components/UploadBook';
 import { fetchBooksByUser, setSuccessMessage } from '../store/slices/bookSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import UserBookCard from '../components/UserBookCard';
+import { fetchUsers } from '../store/slices/userSlice';
+import { GridView, ListView } from '../components/dashboard';
 
 const DashboardPage: React.FC = () => {
     const dispatch = useDispatch<ThunkDispatch<RootState, void, any>>();
     const toast = useToast();
 
     const { loggedUser } = useSelector((state: RootState) => state.user);
-    const { books, loading, error } = useSelector(
+    const { booksByUser, loading, error } = useSelector(
         (state: RootState) => state.books
     );
 
@@ -40,6 +45,7 @@ const DashboardPage: React.FC = () => {
     );
 
     const [isUploadModalOpen, setUploadModalOpen] = useState<boolean>(false);
+    const [isListView, setIsListView] = useState<boolean>(false);
 
     const openUploadModal = () => {
         setUploadModalOpen(true);
@@ -48,6 +54,14 @@ const DashboardPage: React.FC = () => {
     const closeModal = () => {
         setUploadModalOpen(false);
     };
+
+    const handleToogleView = () => {
+        setIsListView(!isListView);
+    };
+
+    useEffect(() => {
+        dispatch(fetchUsers());
+    }, []);
 
     useEffect(() => {
         if (loggedUser) dispatch(fetchBooksByUser(loggedUser.id));
@@ -77,8 +91,22 @@ const DashboardPage: React.FC = () => {
         );
     }
 
+    if (!loggedUser.activeSub) {
+        return (
+            <Box>
+                <Alert status="error">
+                    <AlertIcon />
+                    {`Necesitas una suscripción activa para acceder a esta página.`}
+                </Alert>
+                <Text
+                    p={4}
+                >{`Ve a la sección de precios para ver los planes que tenemos disponibles.`}</Text>
+            </Box>
+        );
+    }
+
     return (
-        <div>
+        <div style={{ marginBottom: '100px' }}>
             <VStack>
                 <Box p={8} display="flex">
                     {loggedUser?.picture && (
@@ -96,9 +124,23 @@ const DashboardPage: React.FC = () => {
             </VStack>
             <VStack spacing={4} align="center">
                 <Text>Book Management</Text>
-                <Button size="sm" onClick={openUploadModal} colorScheme="blue">
-                    Upload
-                </Button>
+                <HStack>
+                    <Button
+                        size="sm"
+                        onClick={openUploadModal}
+                        colorScheme="blue"
+                    >
+                        Subir Libro
+                    </Button>
+                    <Spacer />
+                    <VStack>
+                        <Text>Lista</Text>
+                        <Switch
+                            isChecked={isListView}
+                            onChange={handleToogleView}
+                        />
+                    </VStack>
+                </HStack>
             </VStack>
             <VStack spacing={2} align="center">
                 <Box>
@@ -113,23 +155,17 @@ const DashboardPage: React.FC = () => {
                     )}
                     {error && <p>Error: {error}</p>}
                 </Box>
-                <SimpleGrid
-                    columns={3}
-                    spacing={5}
-                    overflowY="scroll"
-                    maxHeight="80vh"
-                >
-                    {books.map((book) => {
-                        return (
-                            <Box key={book.id}>
-                                <UserBookCard
-                                    userId={loggedUser.id}
-                                    book={book}
-                                />
-                            </Box>
-                        );
-                    })}
-                </SimpleGrid>
+                {booksByUser.length === 0 && (
+                    <Box>
+                        <Text>{`Todavía no tienes libros en inventario.`}</Text>
+                        <Text>{`Haz click en 'Subir Libro' para comenzar a publicar.`}</Text>
+                    </Box>
+                )}
+                {isListView ? (
+                    <ListView user={loggedUser} books={booksByUser} />
+                ) : (
+                    <GridView user={loggedUser} books={booksByUser} />
+                )}
             </VStack>
             <Modal isOpen={isUploadModalOpen} onClose={closeModal}>
                 <ModalOverlay />
