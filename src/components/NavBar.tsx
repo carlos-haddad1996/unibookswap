@@ -14,6 +14,9 @@ import {
     Image,
     HStack,
     useColorMode,
+    InputGroup,
+    Input,
+    InputLeftElement,
 } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import LoginPage from '../containers/LoginPage';
@@ -25,13 +28,15 @@ import { useAppDispatch } from '../store/hooks';
 import CartPopOver from './CartPopOver';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
+import { SearchIcon } from '@chakra-ui/icons';
+import NavBarSearchPopOver from './NavBarSearchPopOver';
 
 const NavBar: React.FC = () => {
     const dispatch = useAppDispatch();
     const { colorMode, toggleColorMode } = useColorMode();
     const { loggedUser } = useSelector((state: RootState) => state.user);
 
-    const [isLoginModalOpen, setLoginModalOpen] = useState(false);
+    const [isLoginModalOpen, setLoginModalOpen] = useState<boolean>(false);
 
     const openLoginModal = () => {
         setLoginModalOpen(true);
@@ -88,6 +93,9 @@ const NavBar: React.FC = () => {
             </HStack>
             <Spacer />
             <HStack>
+                {/* <Box>
+                    <NavBarSearchPopOver />
+                </Box> */}
                 <Box>
                     {!loggedUser ? (
                         <Button

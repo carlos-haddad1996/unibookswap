@@ -20,12 +20,16 @@ import {
     Spinner,
     useToast,
     useColorMode,
+    HStack,
+    Switch,
+    Spacer,
 } from '@chakra-ui/react';
 import UploadBook from '../components/UploadBook';
 import { fetchBooksByUser, setSuccessMessage } from '../store/slices/bookSlice';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import UserBookCard from '../components/UserBookCard';
 import { fetchUsers } from '../store/slices/userSlice';
+import { GridView, ListView } from '../components/dashboard';
 
 const DashboardPage: React.FC = () => {
     const dispatch = useDispatch<ThunkDispatch<RootState, void, any>>();
@@ -41,6 +45,7 @@ const DashboardPage: React.FC = () => {
     );
 
     const [isUploadModalOpen, setUploadModalOpen] = useState<boolean>(false);
+    const [isListView, setIsListView] = useState<boolean>(false);
 
     const openUploadModal = () => {
         setUploadModalOpen(true);
@@ -48,6 +53,10 @@ const DashboardPage: React.FC = () => {
 
     const closeModal = () => {
         setUploadModalOpen(false);
+    };
+
+    const handleToogleView = () => {
+        setIsListView(!isListView);
     };
 
     useEffect(() => {
@@ -97,7 +106,7 @@ const DashboardPage: React.FC = () => {
     }
 
     return (
-        <div>
+        <div style={{ marginBottom: '100px' }}>
             <VStack>
                 <Box p={8} display="flex">
                     {loggedUser?.picture && (
@@ -115,9 +124,23 @@ const DashboardPage: React.FC = () => {
             </VStack>
             <VStack spacing={4} align="center">
                 <Text>Book Management</Text>
-                <Button size="sm" onClick={openUploadModal} colorScheme="blue">
-                    Subir Libro
-                </Button>
+                <HStack>
+                    <Button
+                        size="sm"
+                        onClick={openUploadModal}
+                        colorScheme="blue"
+                    >
+                        Subir Libro
+                    </Button>
+                    <Spacer />
+                    <VStack>
+                        <Text>Lista</Text>
+                        <Switch
+                            isChecked={isListView}
+                            onChange={handleToogleView}
+                        />
+                    </VStack>
+                </HStack>
             </VStack>
             <VStack spacing={2} align="center">
                 <Box>
@@ -138,23 +161,11 @@ const DashboardPage: React.FC = () => {
                         <Text>{`Haz click en 'Subir Libro' para comenzar a publicar.`}</Text>
                     </Box>
                 )}
-                <SimpleGrid
-                    columns={3}
-                    spacing={5}
-                    overflowY="scroll"
-                    maxHeight="80vh"
-                >
-                    {booksByUser.map((book) => {
-                        return (
-                            <Box key={book.id}>
-                                <UserBookCard
-                                    userId={loggedUser.id}
-                                    book={book}
-                                />
-                            </Box>
-                        );
-                    })}
-                </SimpleGrid>
+                {isListView ? (
+                    <ListView user={loggedUser} books={booksByUser} />
+                ) : (
+                    <GridView user={loggedUser} books={booksByUser} />
+                )}
             </VStack>
             <Modal isOpen={isUploadModalOpen} onClose={closeModal}>
                 <ModalOverlay />

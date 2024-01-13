@@ -8,6 +8,16 @@ import {
     ListItem,
     Text,
     VStack,
+    Stack,
+    Flex,
+    Heading,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
+    Divider,
+    IconButton,
 } from '@chakra-ui/react';
 import { RootState } from '../store/rootReducer';
 import { removeFromCart, updateCart } from '../store/slices/cartSlice';
@@ -35,45 +45,53 @@ const CheckoutPage: React.FC = () => {
 
     return (
         <VStack spacing={4} align="center">
-            <Box p={4}>
-                <List spacing={3}>
+            <Box p={4} w="full" maxW="md">
+                <Stack spacing={6}>
                     {cartItems.map((item, index) => (
-                        <ListItem
+                        <Box
                             key={index}
-                            display="flex"
-                            alignItems="center"
+                            p={4}
+                            border="1px"
+                            borderRadius="md"
+                            borderColor="gray.200"
                         >
-                            <Image src={item.book.image} boxSize="100px" />
-                            <Text flex="1">{item.book.title}</Text>
-                            <Text flex="1">
-                                Precio: L.
-                                {parseFloat(item.book.price).toFixed(2)}
-                            </Text>
-                            <Text flex="1">Cantidad: {item.quantity}</Text>
-                            <input
-                                type="number"
-                                min="1"
-                                value={item.quantity}
-                                onChange={(e) =>
-                                    handleCheckout(
-                                        item.book.id,
-                                        parseInt(e.target.value, 10)
-                                    )
-                                }
-                            />
-                            <Box pb={10}>
-                                <Button
-                                    background={'red.500'}
-                                    colorScheme="red"
-                                    height="20px"
-                                    alignContent="center"
-                                    onClick={() => removeItem(item.book)}
-                                    leftIcon={<FontAwesomeIcon icon={faX} />}
+                            <Flex align="center">
+                                <Image
+                                    src={item.book.image}
+                                    boxSize="100px"
+                                    mr={4}
                                 />
-                            </Box>
-                        </ListItem>
+                                <VStack align="start" flex="1">
+                                    <Heading size="md">
+                                        {item.book.title}
+                                    </Heading>
+                                    <Text>
+                                        Precio: L.
+                                        {parseFloat(item.book.price).toFixed(2)}
+                                    </Text>
+                                    <Text>Cantidad:</Text>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        value={item.quantity}
+                                        onChange={(e) =>
+                                            handleCheckout(
+                                                item.book.id,
+                                                parseInt(e.target.value, 10)
+                                            )
+                                        }
+                                    />
+                                </VStack>
+                                <IconButton
+                                    icon={<FontAwesomeIcon icon={faX} />}
+                                    aria-label="delete-icon"
+                                    colorScheme="red"
+                                    onClick={() => removeItem(item.book)}
+                                />
+                            </Flex>
+                        </Box>
                     ))}
-                </List>
+                </Stack>
                 <Text mt={4} fontSize="lg">
                     Precio Total: L.
                     {cartItems
@@ -89,7 +107,9 @@ const CheckoutPage: React.FC = () => {
                     <Button mt={4} colorScheme="teal" onClick={handlePayment}>
                         Proceder a Pago
                     </Button>
-                ) : null}
+                ) : (
+                    <Text mt={4}>El carrito esta vacío</Text>
+                )}
             </Box>
         </VStack>
     );

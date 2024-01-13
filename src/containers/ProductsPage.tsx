@@ -7,6 +7,9 @@ import {
     Input,
     Flex,
     Spinner,
+    Stack,
+    InputGroup,
+    InputLeftElement,
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -19,6 +22,7 @@ import {
 } from '../store/slices/bookSlice';
 import ProductCard from '../components/ProductCard';
 import FilterSection from '../components/FilterSection';
+import { SearchIcon } from '@chakra-ui/icons';
 
 const ProductsPage: React.FC = () => {
     const dispatch = useDispatch<ThunkDispatch<RootState, void, any>>();
@@ -93,17 +97,25 @@ const ProductsPage: React.FC = () => {
                 />
             </VStack>
             <VStack spacing={2} align="center">
-                <Input
-                    placeholder="Search Product"
-                    value={filterText}
-                    onChange={(e) => setFilterText(e.target.value)}
-                    mb={4}
-                    focusBorderColor="purple.500"
-                    borderWidth={2}
-                    borderRadius="md"
-                    size="lg"
-                    width="50%"
-                />
+                <Box width="100%">
+                    <InputGroup>
+                        <InputLeftElement pointerEvents="none" mt={1}>
+                            <SearchIcon color="gray.300" />
+                        </InputLeftElement>
+                        <Input
+                            placeholder="Search"
+                            value={filterText}
+                            onChange={(e) => setFilterText(e.target.value)}
+                            focusBorderColor="blue.500"
+                            borderWidth={2}
+                            borderRadius="100px"
+                            size="lg"
+                            backgroundColor="white"
+                            color="black"
+                            width="50%"
+                        />
+                    </InputGroup>
+                </Box>
                 <Box>
                     {loading && (
                         <Spinner
